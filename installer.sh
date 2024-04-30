@@ -55,6 +55,11 @@ EOF
 }
 
 
+
+conda create --name jupyterlab
+conda activate jupyterlab
+conda install jupyterlab notebook
+
 configure_jupyterlab_systemd() {
     if ! id ollama >/dev/null 2>&1; then
         status "Creating ollama user..."
@@ -89,16 +94,16 @@ RestartSec=10
 
 [Install]
 WantedBy=default.target
-
 EOF
+
     SYSTEMCTL_RUNNING="$(systemctl is-system-running || true)"
     case $SYSTEMCTL_RUNNING in
         running|degraded)
             status "Enabling and starting ollama service..."
             $SUDO systemctl daemon-reload
-            $SUDO systemctl enable ollama
+            $SUDO systemctl enable jupyterlab
 
-            start_service() { $SUDO systemctl restart ollama; }
+            start_service() { $SUDO systemctl restart jupyterlab; }
             trap start_service EXIT
             ;;
     esac
